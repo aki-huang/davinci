@@ -39,6 +39,7 @@ import { Widget, Workbench } from 'containers/Widget/Loadable'
 import { View, ViewEditor } from 'containers/View/Loadable'
 import { Source } from 'containers/Source/Loadable'
 import { Schedule, ScheduleEditor } from 'containers/Schedule/Loadable'
+import { ImportByFile } from 'containers/ImportByFile/Loadable'
 
 import { Dashboard } from 'containers/Dashboard/Loadable'
 
@@ -167,6 +168,11 @@ export class Main extends React.Component<IMainProps, {}> {
                           permission="schedulePermission"
                           path="/project/:projectId/schedules"
                           component={Schedule}
+                        />
+                        <AuthorizedRoute
+                          permission="schedulePermission"
+                          path="/project/:projectId/importByFile"
+                          component={ImportByFile}
                         />
                       </Switch>
                     </Sidebar>

@@ -68,7 +68,19 @@ const sidebarSource: Array<{
     icon: <Icon type="clock-circle" />,
     routes: ['schedules'],
     permissionName: 'schedulePermission'
-  }
+  },
+  {
+    icon: <Icon type="clock-circle" />,
+    routes: ['exportFile'],
+    permissionName: 'importPermission'
+    // permissionName: 'importPermission'
+  },
+  {
+    icon: <Icon type="clock-circle" />,
+    routes: ['importByFile'],
+    permissionName: 'schedulePermission'
+    // permissionName: 'exportPermission'
+  },
 ]
 
 const MainSidebar: React.FC<PropsWithChildren<{}>> = (props) => {

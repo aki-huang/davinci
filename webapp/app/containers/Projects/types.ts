@@ -27,6 +27,8 @@ export interface IProjectPermission {
   viewPermission: number
   vizPermission: number
   widgetPermission: number
+  importPermission: boolean
+  exportPermission: boolean
 }
 
 export interface IProject {

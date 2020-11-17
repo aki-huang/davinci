@@ -10,12 +10,12 @@ export interface IPortal {
 
 export interface IExportToFileState {
     portals: IPortal[],
+    exportSuccess: boolean,
     loading: {
-        table: boolean,
         portal: boolean,
-        // display: boolean,
-        // editing: boolean,
-        // dashboards: boolean,
-        // slides: boolean
     }
+}
+
+export interface IExportDto {
+
 }

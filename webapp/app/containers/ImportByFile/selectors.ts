@@ -1,30 +1,26 @@
 import { createSelector } from 'reselect'
 
-const selectImportByFile= (state) => {
-    console.log('select portal state:', state)
-    return state.importByFile
-}
-
-// const makeSelectportals = () => createSelector(
-const makeSelectPortals = () => createSelector(
-    selectImportByFile,
-    (importByFile) => importByFile.portals
-)
+const selectImportByFile = (state) => state.importByFile
 
 const makeSelectSources = () => createSelector(
-    selectImportByFile,
-    (importByFile) => importByFile.sources
-  )
+  selectImportByFile,
+  (importByFile) => importByFile.sources
+)
+
+const makeSelectImportSuccess = () => createSelector(
+  selectImportByFile,
+  (importByFile) => importByFile.importSuccess
+)
 
 const makeSelectLoading = () => createSelector(
-    selectImportByFile,
-    (importByFile) => importByFile.loading
-  )
-  
+  selectImportByFile,
+  (importByFile) => importByFile.loading
+)
+
 
 export {
-    selectImportByFile,
-    makeSelectPortals,
-    makeSelectSources,
-    makeSelectLoading
+  selectImportByFile,
+  makeSelectSources,
+  makeSelectImportSuccess,
+  makeSelectLoading
 }

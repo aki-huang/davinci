@@ -9,6 +9,8 @@ enum Types {
     EXPORT_REPORTS = 'davinci/exportToFile/EXPORT_REPORTS',
     EXPORT_REPORTS_SUCCESS = 'davinci/exportToFile/EXPORT_REPORTS_SUCCESS',
     EXPORT_REPORTS_FAILURE = 'davinci/exportToFile/EXPORT_REPORTS_FAILURE',
+
+    RESET_EXPORT_SUCCESS_STATUS = 'davinci/exportToFile/RESET_EXPORT_SUCCESS_STATUS',
 }
 
 export const ActionTypes = createTypes(Types)

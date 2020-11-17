@@ -8,7 +8,7 @@ import { RouteComponentWithParams } from 'utils/types'
 import injectReducer from 'utils/injectReducer'
 import injectSaga from 'utils/injectSaga'
 import { createStructuredSelector } from 'reselect'
-import { makeSelectPortals, makeSelectLoading, makeSelectSources } from './selectors'
+import { makeSelectLoading, makeSelectSources, makeSelectImportSuccess } from './selectors'
 import { makeSelectCurrentProject, } from 'containers/Projects/selectors'
 import { ImportByFileActions } from './actions'
 import reducer from './reducer'
@@ -34,6 +34,7 @@ import {
     Modal,
     Upload,
     Select,
+    Result
 } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
 import { ColumnProps } from 'antd/lib/table'
@@ -55,9 +56,11 @@ const { Option } = Select;
 // currentProject: IProject
 //   }
 interface IImportByFileStateProps {
-    portals: IPortal[],
+    // portals: IPortal[],
     sources: ISourceBase[],
-    onLoadPortals: (id: number) => any,
+    importSuccess: boolean,
+    // onLoadPortals: (id: number) => any,
+    resetImportSuccessStatus: () => void,
     onLoadSources: (id: number) => any,
     onImportReport: (id: number, dto: object) => any
 }
@@ -80,21 +83,25 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
 
     const {
         match,
-        portals,
         sources,
-        onLoadPortals,
+        // onLoadPortals,
+        resetImportSuccessStatus,
         onLoadSources,
-        onImportReport
+        onImportReport,
+        importSuccess
     } = props
-    console.log('sources:', sources);
+
+    // console.log('sources:', sources);
     console.log('props:', props);
     // const [viewList, setViewList] = useState([])
-    const [jsonObj, setJsonObj] = useState([])
+    const [jsonObj, setJsonObj] = useState({})
 
     useEffect(() => {
         // console.log('useEffect:', match.params.projectId)
         console.log('useEffect:', onLoadSources(1))
         // onLoadPortals(+match.params.projectId)
+        resetImportSuccessStatus()
+
         onLoadSources(+match.params.projectId)
     }, [])
 
@@ -128,20 +135,20 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
         setJsonObj(tempJsonObj)
     }
 
+    function checkCanImport() {
+        // todo: check all select source
+        // todo: has file
+        if (isEmpty(jsonObj)) {
+            return true
+        }
+
+        return false
+    }
+
     return (
         <Container>
             <Helmet title="ImportByFile" />
-            <ContainerTitle>
-                <Row>
-                    <Col span={24}>
-                        <Breadcrumb className={utilStyles.breadcrumb}>
-                            <Breadcrumb.Item>
-                                <Link to="">導入報表</Link>
-                            </Breadcrumb.Item>
-                        </Breadcrumb>
-                    </Col>
-                </Row>
-            </ContainerTitle>
+
             <ContainerBody>
                 <Box>
                     <Box.Header>
@@ -149,27 +156,38 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                             導入報表
             </Box.Title>
                         <Box.Tools>
-                            {/* <Tooltip placement="bottom" title="新增">
-                <AdminButton type="primary" icon="plus" onClick={addSchedule} />
-              </Tooltip> */}
                         </Box.Tools>
                     </Box.Header>
                     <Box.Body>
-                        <Row>
+                        {!importSuccess && <Row>
                             <Col span={24}>
-                                <input type="file" onChange={(e) => showFile(e)} />
+                                <br />
+
+                                 <input id="importFile" type="file" onChange={(e) => showFile(e)} accept="application/JSON" />
+
+                                <br />
+                                <br />
+                                <br />
 
                                 {
-                                    jsonObj&& !isEmpty(jsonObj['views']) && jsonObj['views'].map((viewItem: any, key: number) => {
+                                    jsonObj && !isEmpty(jsonObj['views']) && <div><span>請選擇各個View的存儲地方: </span></div>
+                                }
+
+                                {
+                                    jsonObj && !isEmpty(jsonObj['views']) && jsonObj['views'].map((viewItem: any, key: number) => {
                                         return (<div key={key}>
-                                            <span>{viewItem.name}: </span>
+
+                                            <br />
+                                            <br />
+                                            <span>{viewItem.name}: &nbsp;&nbsp;&nbsp;</span>
 
                                             <Select
                                                 showSearch
                                                 style={{ width: 200 }}
-                                                placeholder="選擇DataSource"
+                                                placeholder="選擇數據源"
                                                 optionFilterProp="children"
                                                 onChange={(sourceId) => onChange(key, sourceId)}
+                                                defaultValue={sources[0].id}
                                             // onFocus={onFocus}
                                             // onBlur={onBlur}
                                             // onSearch={onSearch}
@@ -183,17 +201,27 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                                     })
                                 }
 
+                                <br />
+                                <br />
 
-                                <Button type='primary' onClick={() => {
+                                <Button type='primary' disabled={checkCanImport()} onClick={() => {
                                     console.log('click 導入')
                                     onImportReport(+match.params.projectId, jsonObj)
                                 }}>導入</Button>
 
-<br />
+                                <br />
                                 <br />
                                 <br />
                             </Col>
                         </Row>
+                        }
+
+                        {importSuccess && <Result status="success" title="導入成功" extra={[
+                            <Button type="primary" key="console" onClick={() => {
+                                resetImportSuccessStatus()
+                                setJsonObj({})
+                            }}> 返回 </Button>
+                        ]} />}
                     </Box.Body>
                 </Box>
             </ContainerBody>
@@ -204,18 +232,20 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
 
 // todo: tofix cannot pass state to selector
 const mapStateToProps = createStructuredSelector({
-    portals: makeSelectPortals(),
+    // portals: makeSelectPortals(),
     sources: makeSelectSources(),
+    importSuccess: makeSelectImportSuccess(),
     currentProject: makeSelectCurrentProject(),
     loading: makeSelectLoading()
 })
 
 const mapDispatchToProps = (dispatch) => {
     return {
-        onLoadPortals: (projectId) => dispatch(ImportByFileActions.loadPortals(projectId)),
+        // onLoadPortals: (projectId) => dispatch(ImportByFileActions.loadPortals(projectId)),
         onImportReport: (projectId, importDto) => dispatch(ImportByFileActions.importReport(projectId, importDto)),
         onLoadSources: (projectId: number) =>
             dispatch(ImportByFileActions.loadSources(projectId)),
+        resetImportSuccessStatus: () => dispatch(ImportByFileActions.resetImportSuccessStatus())
     }
 }
 

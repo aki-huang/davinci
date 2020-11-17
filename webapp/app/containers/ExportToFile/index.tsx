@@ -12,7 +12,7 @@ import { makeSelectCurrentProject, } from 'containers/Projects/selectors'
 import { isEmpty, isString } from 'lodash'
 
 
-import { makeSelectPortals, makeSelectLoading, } from './selectors'
+import { makeSelectPortals, makeSelectLoading, makeSelectExportSuccess } from './selectors'
 import ModulePermission from 'containers/Account/components/checkModulePermission'
 import { initializePermission } from 'containers/Account/components/checkUtilPermission'
 
@@ -36,7 +36,8 @@ import {
     Upload,
     Select,
     Checkbox,
-    Divider
+    Divider,
+    Result
 } from 'antd'
 import { ButtonProps } from 'antd/lib/button'
 import { ColumnProps } from 'antd/lib/table'
@@ -58,20 +59,33 @@ let defaultCheckedList = [];
 import { IProject } from 'containers/Projects/types'
 
 import utilStyles from 'assets/less/util.less'
+import { IPortal, IExportDto } from './types'
 // import Styles from './Schedule.less'
 const { Option } = Select;
 
-const ExportMain: React.FC<any> = (props) => {
+interface IExportToFileStateProps {
+    portals: IPortal[],
+    exportSuccess: boolean,
+    onLoadPortals: (id: number) => any,
+    onExportReport: (id: number, exportDto: IExportDto) => any,
+    resetExportSuccessStatus: () => void
+}
+
+type ExportToFileProps = IExportToFileStateProps & RouteComponentWithParams
+
+const ExportMain: React.FC<ExportToFileProps> = (props) => {
 
     const {
         match,
         portals,
+        exportSuccess,
         onLoadPortals,
-        onExportReport
+        onExportReport,
+        resetExportSuccessStatus
     } = props
 
     plainOptions = portals.map(_item => ({ label: _item.name, value: _item.id }))
-    console.log( 'plainOptions ;', plainOptions)
+    console.log('plainOptions ;', plainOptions)
     let allPortalsIds = portals.map(_item => _item.id)
 
     const [checkedList, setCheckedList] = React.useState(defaultCheckedList);
@@ -81,6 +95,7 @@ const ExportMain: React.FC<any> = (props) => {
     console.log('portals:', portals);
     useEffect(() => {
         // console.log('useEffect:', match.params.projectId)
+        resetExportSuccessStatus()
         onLoadPortals(+match.params.projectId)
     }, [])
 
@@ -101,17 +116,6 @@ const ExportMain: React.FC<any> = (props) => {
     return (
         <Container>
             <Helmet title="ExportToFile"></Helmet>
-            <ContainerTitle>
-                <Row>
-                    <Col span={24}>
-                        <Breadcrumb className={utilStyles.breadcrumb}>
-                            <Breadcrumb.Item>
-                                <Link to="">導出報表</Link>
-                            </Breadcrumb.Item>
-                        </Breadcrumb>
-                    </Col>
-                </Row>
-            </ContainerTitle>
             <ContainerBody>
                 <Box>
                     <Box.Header>
@@ -122,19 +126,20 @@ const ExportMain: React.FC<any> = (props) => {
                         </Box.Tools>
                     </Box.Header>
                     <Box.Body>
-                        <Row>
+                        { !exportSuccess && <Row>
                             <Col span={24}>
+                                <br />
+
                                 <Checkbox indeterminate={indeterminate} onChange={onCheckAllChange} checked={checkAll}>
-                                    Check all
+                                    全選
                                 </Checkbox>
                                 <Divider />
                                 <CheckboxGroup options={plainOptions} value={checkedList} onChange={onChange} />
 
                                 <br />
                                 <br />
-                                <br />
 
-                                <Button type='primary' onClick={() => {
+                                <Button type='primary' disabled={checkedList.length <= 0} onClick={() => {
                                     const exportReportList = checkedList
                                     console.log('click 導出:', checkedList, 'exportReportList:', exportReportList)
                                     onExportReport(+match.params.projectId, exportReportList)
@@ -142,9 +147,13 @@ const ExportMain: React.FC<any> = (props) => {
 
                                 <br />
                                 <br />
-                                <br />
                             </Col>
-                        </Row>
+                        </Row>}
+                        {exportSuccess && <Result status="success" title="導出成功，請到右上角下載中心下載" extra={[
+                            <Button type="primary" key="console" onClick={() => {
+                                resetExportSuccessStatus()
+                            }}> 返回 </Button>
+                        ]} />}
                     </Box.Body>
                 </Box>
             </ContainerBody>
@@ -157,6 +166,7 @@ const ExportMain: React.FC<any> = (props) => {
 // todo: tofix cannot pass state to selector
 const mapStateToProps = createStructuredSelector({
     portals: makeSelectPortals(),
+    exportSuccess: makeSelectExportSuccess(),
     currentProject: makeSelectCurrentProject(),
     loading: makeSelectLoading()
 })
@@ -165,6 +175,7 @@ const mapDispatchToProps = (dispatch) => {
     return {
         onLoadPortals: (projectId) => dispatch(ExportToFileActions.loadPortals(projectId)),
         onExportReport: (projectId, importDto) => dispatch(ExportToFileActions.exportReport(projectId, importDto)),
+        resetExportSuccessStatus: () => dispatch(ExportToFileActions.resetExportSuccessStatus())
     }
 }
 

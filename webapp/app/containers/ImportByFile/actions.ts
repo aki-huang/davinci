@@ -3,28 +3,28 @@ import { IPortal, ISourceBase } from './types'
 import { returnType } from 'utils/redux'
 
 export const ImportByFileActions = {
-  loadPortals(projectId: number) {
-    return {
-      type: ActionTypes.LOAD_PORTALS,
-      payload: {
-        projectId
-      }
-    }
-  },
-  portalsLoaded(portals: IPortal[]) {
-    return {
-      type: ActionTypes.LOAD_PORTALS_SUCCESS,
-      payload: {
-        portals
-      }
-    }
-  },
-  loadPortalsFail() {
-    return {
-      type: ActionTypes.LOAD_PORTALS_FAILURE,
-      payload: {}
-    }
-  },
+  // loadPortals(projectId: number) {
+  //   return {
+  //     type: ActionTypes.LOAD_PORTALS,
+  //     payload: {
+  //       projectId
+  //     }
+  //   }
+  // },
+  // portalsLoaded(portals: IPortal[]) {
+  //   return {
+  //     type: ActionTypes.LOAD_PORTALS_SUCCESS,
+  //     payload: {
+  //       portals
+  //     }
+  //   }
+  // },
+  // loadPortalsFail() {
+  //   return {
+  //     type: ActionTypes.LOAD_PORTALS_FAILURE,
+  //     payload: {}
+  //   }
+  // },
 
   loadSources(projectId: number) {
     return {
@@ -45,6 +45,12 @@ export const ImportByFileActions = {
   loadSourcesFail() {
     return {
       type: ActionTypes.LOAD_SOURCES_FAILURE
+    }
+  },
+
+  resetImportSuccessStatus() {
+    return {
+      type: ActionTypes.RESET_IMPORT_SUCCESS_STATUS
     }
   },
 

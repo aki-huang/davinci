@@ -1,14 +1,16 @@
 import { createSelector } from 'reselect'
 
-const selectExportToFile = (state) => {
-    console.log('selectExportToFile portal state:', state)
-    return state.exportToFile
-}
+const selectExportToFile = (state) => state.exportToFile
 
 // const makeSelectportals = () => createSelector(
 const makeSelectPortals = () => createSelector(
     selectExportToFile,
     (exportToFile) => exportToFile.portals
+)
+
+const makeSelectExportSuccess = () => createSelector(
+    selectExportToFile,
+    (exportToFile) => exportToFile.exportSuccess
 )
 
 const makeSelectLoading = () => createSelector(
@@ -18,6 +20,7 @@ const makeSelectLoading = () => createSelector(
   
 export {
     selectExportToFile,
+    makeSelectExportSuccess,
     makeSelectPortals,
     makeSelectLoading
 }

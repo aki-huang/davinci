@@ -51,6 +51,12 @@ export const ExportToFileActions = {
     }
   },
 
+  resetExportSuccessStatus() {
+    return {
+      type: ActionTypes.RESET_EXPORT_SUCCESS_STATUS
+    }
+  }
+
 }
 
 

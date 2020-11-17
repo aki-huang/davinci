@@ -6,13 +6,9 @@ import { ActionTypes } from './constants'
 
 export const initialState: IExportToFileState = {
     portals: [],
+    exportSuccess: false,
     loading: {
-        table: false,
         portal: false,
-        // display: false,
-        // editing: false,
-        // dashboards: false,
-        // slides: false
     }
 }
 
@@ -33,12 +29,16 @@ const exportToFileReducer = (
                 //   draft.loading.table = false
                 break
             case ActionTypes.EXPORT_REPORTS:
+                draft.exportSuccess = false
                 break
             case ActionTypes.EXPORT_REPORTS_SUCCESS:
-                // draft.
+                draft.exportSuccess = true
                 break
             case ActionTypes.EXPORT_REPORTS_FAILURE:
+                draft.exportSuccess = false
                 break
+            case ActionTypes.RESET_EXPORT_SUCCESS_STATUS:
+                draft.exportSuccess = false
         }
 
     })

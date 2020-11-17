@@ -5,15 +5,11 @@ import produce from 'immer'
 import { ActionTypes } from './constants'
 
 export const initialState: IImportByFileState = { 
-    portals: [],
+    // portals: [],
     sources: [],
+    importSuccess: false,
     loading: {
-        table: false,
-        portal: false,
-        // display: false,
-        // editing: false,
-        // dashboards: false,
-        // slides: false
+        // portal: false,
       }
 }
 
@@ -23,13 +19,17 @@ const importByFileReducer = (
 ) => 
   produce(state, (draft: IImportByFileState) => {
       switch (action.type) {
-          case ActionTypes.LOAD_PORTALS:
-            //   draft.loading.table = true
-              break
-          case ActionTypes.LOAD_PORTALS_SUCCESS:
-              draft.portals = action.payload.portals
-            //   draft.loading.table = false
-              break
+          // case ActionTypes.LOAD_PORTALS:
+          //   //   draft.loading.table = true
+          //     break
+          // case ActionTypes.LOAD_PORTALS_SUCCESS:
+          //     // draft.portals = action.payload.portals
+          //   //   draft.loading.table = false
+          //     break
+          // case ActionTypes.LOAD_PORTALS_FAILURE:
+          //     // draft.loading.table = false
+          //     break
+
           case ActionTypes.LOAD_SOURCES:
             //   draft.loading.table = true
               break
@@ -40,18 +40,21 @@ const importByFileReducer = (
           case ActionTypes.LOAD_SOURCES_FAILURE:
             //   draft.loading.table = false
               break
-        //   case ActionTypes.LOAD_PORTALS_FAILURE:
-        //       draft.loading.table = false
-        //       break
+
         case ActionTypes.IMPORT_REPORT:
-              draft.loading.table = false
+              // draft.loading.import = true
+              draft.importSuccess = false
               break
         case ActionTypes.IMPORT_REPORT_SUCCESS:
-              draft.loading.table = true
+              // draft.loading.import = false
+              draft.importSuccess = true
               break
         case ActionTypes.IMPORT_REPORT_FAILURE:
-              draft.loading.table = false
+              // draft.loading.import = false
+              draft.importSuccess = false
               break
+        case ActionTypes.RESET_IMPORT_SUCCESS_STATUS:
+              draft.importSuccess = false
       }
   })
 

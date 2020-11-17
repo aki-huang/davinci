@@ -13,6 +13,8 @@ enum Types {
     IMPORT_REPORT = 'davinci/importByFile/IMPORT_REPORT',
     IMPORT_REPORT_SUCCESS = 'davinci/importByFile/IMPORT_REPORT_SUCCESS',
     IMPORT_REPORT_FAILURE = 'davinci/importByFile/IMPORT_REPORT_FAILURE',
+
+    RESET_IMPORT_SUCCESS_STATUS = 'davinci/importByFile/RESET_IMPORT_SUCCESS_STATUS',
 }
 
 // export { DashboardTypes } from 'app/containers/Dashboard/constants'

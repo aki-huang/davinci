@@ -11,15 +11,12 @@ export interface IPortal {
 }
 
 export interface IImportByFileState {
-    portals: IPortal[],
+    // portals: IPortal[],
     sources: ISourceBase[],
+    importSuccess: boolean,
     loading: {
-        table: boolean,
-        portal: boolean,
-        // display: boolean,
-        // editing: boolean,
-        // dashboards: boolean,
-        // slides: boolean
+        // import: boolean,
+        // portal: boolean,
     }
 }
 

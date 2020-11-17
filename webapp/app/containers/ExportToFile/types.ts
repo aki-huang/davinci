@@ -1,6 +1,4 @@
 
-export type SourceType = 'csv' | 'jdbc'
-
 export interface IPortal {
     projectId?: number
     id?: number
@@ -10,9 +8,8 @@ export interface IPortal {
     description?: string
 }
 
-export interface IImportByFileState {
+export interface IExportToFileState {
     portals: IPortal[],
-    sources: ISourceBase[],
     loading: {
         table: boolean,
         portal: boolean,
@@ -22,14 +19,3 @@ export interface IImportByFileState {
         // slides: boolean
     }
 }
-
-export interface ISourceSimple {
-    id: number
-    name: string
-  }
-  
-  export interface ISourceBase extends ISourceSimple {
-    type: SourceType
-    description: string
-    projectId: number
-  }

@@ -104,6 +104,7 @@ const ScheduleList: React.FC<ScheduleListProps> = (props) => {
     onChangeScheduleJobStatus,
     onExecuteScheduleImmediately
   } = props
+  console.log('props:', props);
   const [execLogModalVisible, setExecLogModalVisible] = useState(false)
   const [execLog, setExecLogContent] = useState('')
   const tablePagination = useTablePagination(0)

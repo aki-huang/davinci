@@ -8,11 +8,13 @@ import { RouteComponentWithParams } from 'utils/types'
 import injectReducer from 'utils/injectReducer'
 import injectSaga from 'utils/injectSaga'
 import { createStructuredSelector } from 'reselect'
-import { makeSelectPortals, makeSelectLoading } from './selectors'
+import { makeSelectPortals, makeSelectLoading, makeSelectSources } from './selectors'
 import { makeSelectCurrentProject, } from 'containers/Projects/selectors'
 import { ImportByFileActions } from './actions'
 import reducer from './reducer'
 import saga from './sagas'
+
+import { isEmpty, isString } from 'lodash'
 
 import ModulePermission from 'containers/Account/components/checkModulePermission'
 import { initializePermission } from 'containers/Account/components/checkUtilPermission'
@@ -31,19 +33,21 @@ import {
     message,
     Modal,
     Upload,
+    Select,
 } from 'antd'
-import { UploadOutlined } from '@ant-design/icons';
 import { ButtonProps } from 'antd/lib/button'
 import { ColumnProps } from 'antd/lib/table'
 import Container, { ContainerTitle, ContainerBody } from 'components/Container'
 import Box from 'components/Box'
 
 // import { ISchedule, JobStatus, IScheduleLoading } from './types'
-import { IPortal } from './types'
+import { IPortal, ISourceBase } from './types'
 import { IProject } from 'containers/Projects/types'
 
 import utilStyles from 'assets/less/util.less'
 // import Styles from './Schedule.less'
+const { Option } = Select;
+
 
 // interface IScheduleListStateProps {
 // loading: IScheduleLoading
@@ -52,7 +56,10 @@ import utilStyles from 'assets/less/util.less'
 //   }
 interface IImportByFileStateProps {
     portals: IPortal[],
-    onLoadPortals: (id: number) => any
+    sources: ISourceBase[],
+    onLoadPortals: (id: number) => any,
+    onLoadSources: (id: number) => any,
+    onImportReport: (id: number, dto: object) => any
 }
 
 //   interface IScheduleListDispatchProps {
@@ -74,45 +81,52 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
     const {
         match,
         portals,
-        onLoadPortals
+        sources,
+        onLoadPortals,
+        onLoadSources,
+        onImportReport
     } = props
-    console.log('portals:', portals);
+    console.log('sources:', sources);
     console.log('props:', props);
+    // const [viewList, setViewList] = useState([])
+    const [jsonObj, setJsonObj] = useState([])
 
     useEffect(() => {
         // console.log('useEffect:', match.params.projectId)
-        // console.log('useEffect:', onLoadPortals(1))
-        onLoadPortals(+match.params.projectId)
+        console.log('useEffect:', onLoadSources(1))
+        // onLoadPortals(+match.params.projectId)
+        onLoadSources(+match.params.projectId)
     }, [])
-
-    // const uploadProps = {
-    //     name: 'file',
-    //     action: 'https://www.mocky.io/v2/5cc8019d300000980a055e76',
-    //     headers: {
-    //       authorization: 'authorization-text',
-    //     },
-    //     onChange(info) {
-    //       if (info.file.status !== 'uploading') {
-    //         console.log(info.file, info.fileList);
-    //       }
-    //       if (info.file.status === 'done') {
-    //         message.success(`${info.file.name} file uploaded successfully`);
-    //       } else if (info.file.status === 'error') {
-    //         message.error(`${info.file.name} file upload failed.`);
-    //       }
-    //     },
-    //   };
 
     const showFile = async (e) => {
         e.preventDefault()
         const reader = new FileReader()
-        reader.onload = async (e) => { 
-          const text = (e.target.result)
-          console.log(text)
-        //   alert(text)
+        reader.onload = async (e) => {
+            const text = (e.target.result)
+            if (isString(text)) {
+                let fileObj = JSON.parse(text)
+                setJsonObj(fileObj)
+                // console.log(typeof fileObj)
+                // console.log(fileObj['views'])
+                // if (!isEmpty(fileObj['views'])) {
+                //     setViewList(fileObj['views'])
+                // }
+
+            } else {
+                console.log('文件讀取結果不是string')
+            }
         };
         reader.readAsText(e.target.files[0])
-      }
+    }
+
+    function onChange(key, sourceId) {
+        console.log(`${key} selected ${sourceId}`);
+        let tempJsonObj = jsonObj;
+        tempJsonObj['views'][key]['source'] = sources.find(item => item.id === sourceId)
+        tempJsonObj['views'][key]['sourceId'] = sourceId
+        console.log('tempJSonObj:', tempJsonObj)
+        setJsonObj(tempJsonObj)
+    }
 
     return (
         <Container>
@@ -129,16 +143,69 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                 </Row>
             </ContainerTitle>
             <ContainerBody>
-                <input type="file" onChange={(e) => showFile(e)} />
+                <Box>
+                    <Box.Header>
+                        <Box.Title>
+                            導入報表
+            </Box.Title>
+                        <Box.Tools>
+                            {/* <Tooltip placement="bottom" title="新增">
+                <AdminButton type="primary" icon="plus" onClick={addSchedule} />
+              </Tooltip> */}
+                        </Box.Tools>
+                    </Box.Header>
+                    <Box.Body>
+                        <Row>
+                            <Col span={24}>
+                                <input type="file" onChange={(e) => showFile(e)} />
+
+                                {
+                                    jsonObj&& !isEmpty(jsonObj['views']) && jsonObj['views'].map((viewItem: any, key: number) => {
+                                        return (<div key={key}>
+                                            <span>{viewItem.name}: </span>
+
+                                            <Select
+                                                showSearch
+                                                style={{ width: 200 }}
+                                                placeholder="選擇DataSource"
+                                                optionFilterProp="children"
+                                                onChange={(sourceId) => onChange(key, sourceId)}
+                                            // onFocus={onFocus}
+                                            // onBlur={onBlur}
+                                            // onSearch={onSearch}
+                                            // filterOption={(input, option) =>
+                                            //     option.children.toLowerCase().indexOf(input.toLowerCase()) >= 0
+                                            // }
+                                            >
+                                                {sources.map(portalItem => (<Option value={portalItem.id}>{portalItem.name}</Option>))}
+                                            </Select>
+                                        </div>)
+                                    })
+                                }
+
+
+                                <Button type='primary' onClick={() => {
+                                    console.log('click 導入')
+                                    onImportReport(+match.params.projectId, jsonObj)
+                                }}>導入</Button>
+
+<br />
+                                <br />
+                                <br />
+                            </Col>
+                        </Row>
+                    </Box.Body>
+                </Box>
             </ContainerBody>
         </Container>
     )
 }
 
 
-// todo: tofix cannot pass state to selector 
+// todo: tofix cannot pass state to selector
 const mapStateToProps = createStructuredSelector({
     portals: makeSelectPortals(),
+    sources: makeSelectSources(),
     currentProject: makeSelectCurrentProject(),
     loading: makeSelectLoading()
 })
@@ -146,6 +213,9 @@ const mapStateToProps = createStructuredSelector({
 const mapDispatchToProps = (dispatch) => {
     return {
         onLoadPortals: (projectId) => dispatch(ImportByFileActions.loadPortals(projectId)),
+        onImportReport: (projectId, importDto) => dispatch(ImportByFileActions.importReport(projectId, importDto)),
+        onLoadSources: (projectId: number) =>
+            dispatch(ImportByFileActions.loadSources(projectId)),
     }
 }
 

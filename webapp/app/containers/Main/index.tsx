@@ -40,6 +40,7 @@ import { View, ViewEditor } from 'containers/View/Loadable'
 import { Source } from 'containers/Source/Loadable'
 import { Schedule, ScheduleEditor } from 'containers/Schedule/Loadable'
 import { ImportByFile } from 'containers/ImportByFile/Loadable'
+import { ExportToFile } from 'containers/ExportToFile/Loadable'
 
 import { Dashboard } from 'containers/Dashboard/Loadable'
 
@@ -173,6 +174,11 @@ export class Main extends React.Component<IMainProps, {}> {
                           permission="schedulePermission"
                           path="/project/:projectId/importByFile"
                           component={ImportByFile}
+                        />
+                        <AuthorizedRoute
+                          permission="schedulePermission"
+                          path="/project/:projectId/exportToFile"
+                          component={ExportToFile}
                         />
                       </Switch>
                     </Sidebar>

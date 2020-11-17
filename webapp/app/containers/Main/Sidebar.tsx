@@ -29,7 +29,7 @@ import {
 import { showNavigator } from 'containers/App/actions'
 import { makeSelectCurrentProject } from 'containers/Projects/selectors'
 
-import { Icon } from 'antd'
+import { Icon, } from 'antd'
 import SidebarOption from 'components/SidebarOption'
 import Sidebar from 'components/Sidebar'
 
@@ -70,16 +70,16 @@ const sidebarSource: Array<{
     permissionName: 'schedulePermission'
   },
   {
-    icon: <Icon type="clock-circle" />,
-    routes: ['exportFile'],
-    permissionName: 'importPermission'
-    // permissionName: 'importPermission'
-  },
-  {
-    icon: <Icon type="clock-circle" />,
-    routes: ['importByFile'],
+    icon: <Icon type="export" />,
+    routes: ['exportToFile'],
     permissionName: 'schedulePermission'
     // permissionName: 'exportPermission'
+  },
+  {
+    icon: <Icon type="download" />,
+    routes: ['importByFile'],
+    permissionName: 'schedulePermission'
+    // permissionName: 'importPermission'
   },
 ]
 

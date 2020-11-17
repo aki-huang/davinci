@@ -38,6 +38,7 @@ export function* getViews (action: ViewActionType) {
   let views: IViewBase[]
   try {
     const asyncData = yield call(request, `${api.view}?projectId=${payload.projectId}`)
+    console.log('_+_+_+_+_views :', asyncData)
     views = asyncData.payload
     yield put(viewsLoaded(views))
   } catch (err) {

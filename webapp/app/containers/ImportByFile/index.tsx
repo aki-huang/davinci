@@ -105,6 +105,17 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
         onLoadSources(+match.params.projectId)
     }, [])
 
+    const initialSourceId = (_fileObj) => {
+        _fileObj['views'].map((_item, key) => {
+            console.log('key:', key, '_item:', _item, 'sources[0]:', sources[0])
+            _item['source'] = sources[0]
+            _item['sourceId'] = sources[0].id
+        })
+
+        console.log('_fileObj:', _fileObj)
+        return _fileObj
+    }
+
     const showFile = async (e) => {
         e.preventDefault()
         const reader = new FileReader()
@@ -114,7 +125,7 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                 try {
 
                     let fileObj = JSON.parse(text)
-                    setJsonObj(fileObj)
+                    setJsonObj(initialSourceId(fileObj))
                     // console.log(typeof fileObj)
                     // console.log(fileObj['views'])
                     // if (!isEmpty(fileObj['views'])) {
@@ -212,7 +223,7 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                                 <br />
 
                                 <Button type='primary' disabled={checkCanImport()} onClick={() => {
-                                    console.log('click 導入')
+                                    console.log('click 導入:', jsonObj)
                                     onImportReport(+match.params.projectId, jsonObj)
                                 }}>導入</Button>
 

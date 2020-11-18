@@ -111,13 +111,20 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
         reader.onload = async (e) => {
             const text = (e.target.result)
             if (isString(text)) {
-                let fileObj = JSON.parse(text)
-                setJsonObj(fileObj)
-                // console.log(typeof fileObj)
-                // console.log(fileObj['views'])
-                // if (!isEmpty(fileObj['views'])) {
-                //     setViewList(fileObj['views'])
-                // }
+                try {
+
+                    let fileObj = JSON.parse(text)
+                    setJsonObj(fileObj)
+                    // console.log(typeof fileObj)
+                    // console.log(fileObj['views'])
+                    // if (!isEmpty(fileObj['views'])) {
+                    //     setViewList(fileObj['views'])
+                    // }
+
+                } catch (error) {
+                    console.error('error:', error);
+                    message.error(`文件格式不正確`)
+                }
 
             } else {
                 console.log('文件讀取結果不是string')
@@ -163,7 +170,7 @@ const ImportMain: React.FC<ImportByFileProps> = (props) => {
                             <Col span={24}>
                                 <br />
 
-                                 <input id="importFile" type="file" onChange={(e) => showFile(e)} accept="application/JSON" />
+                                <input id="importFile" type="file" onChange={(e) => showFile(e)} accept="application/JSON" />
 
                                 <br />
                                 <br />

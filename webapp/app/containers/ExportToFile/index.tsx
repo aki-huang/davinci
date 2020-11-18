@@ -89,7 +89,7 @@ const ExportMain: React.FC<ExportToFileProps> = (props) => {
     let allPortalsIds = portals.map(_item => _item.id)
 
     const [checkedList, setCheckedList] = React.useState(defaultCheckedList);
-    const [indeterminate, setIndeterminate] = React.useState(true);
+    const [indeterminate, setIndeterminate] = React.useState(false);
     const [checkAll, setCheckAll] = React.useState(false);
 
     console.log('portals:', portals);

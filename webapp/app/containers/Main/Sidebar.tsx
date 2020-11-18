@@ -76,7 +76,7 @@ const sidebarSource: Array<{
     // permissionName: 'exportPermission'
   },
   {
-    icon: <Icon type="download" />,
+    icon: <Icon type="import" />,
     routes: ['importByFile'],
     permissionName: 'schedulePermission'
     // permissionName: 'importPermission'
